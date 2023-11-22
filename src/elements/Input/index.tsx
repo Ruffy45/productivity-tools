@@ -1,4 +1,3 @@
-import React from 'react';
 import InputProps from './input.type';
 
 const Input = ({ name, value, placeholder, onChange }: InputProps) => {
