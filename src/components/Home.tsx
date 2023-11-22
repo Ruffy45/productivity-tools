@@ -61,25 +61,9 @@ export default function Home() {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [currentContainerId, setCurrentContainerId] =
     useState<UniqueIdentifier>();
-  const [containerName, setContainerName] = useState('');
   const [itemName, setItemName] = useState('');
-  const [showAddContainerModal, setShowAddContainerModal] = useState(false);
   const [showAddItemModal, setShowAddItemModal] = useState(false);
 
-  const onAddContainer = () => {
-    if (!containerName) return;
-    const id = `container-${uuidv4()}`;
-    setContainers([
-      ...containers,
-      {
-        id,
-        title: containerName,
-        items: [],
-      },
-    ]);
-    setContainerName('');
-    setShowAddContainerModal(false);
-  };
 
   const onAddItem = () => {
     if (!itemName) return;
