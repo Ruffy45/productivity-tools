@@ -28,6 +28,7 @@ import Items from '@/elements/Item';
 import Modal from '@/elements/Modal';
 import Input from '@/elements/Input';
 import { Button } from '@/elements/Button';
+import { databases } from '@/appwrite/Appwriteconfig';
 
 
 type DNDType = {
@@ -40,6 +41,7 @@ type DNDType = {
 };
 
 export default function Home() {
+
     const [containers, setContainers] = useState<DNDType[]>([
         {
           id: `container-${uuidv4()}`,
@@ -58,18 +60,39 @@ export default function Home() {
         },
         // Add more default containers here...
       ]);
+      
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [currentContainerId, setCurrentContainerId] =
     useState<UniqueIdentifier>();
   const [itemName, setItemName] = useState('');
   const [showAddItemModal, setShowAddItemModal] = useState(false);
 
-
+      
   const onAddItem = () => {
+
     if (!itemName) return;
     const id = `item-${uuidv4()}`;
     const container = containers.find((item) => item.id === currentContainerId);
     if (!container) return;
+
+    // add the item to database
+    
+    try {
+      databases.createDocument(
+       '655f2c7ad4a8a6871b95',//database id
+       '655f2c877a5d228db362',//collection id
+       'unique()',            //document id
+       {
+         title: itemName, // Your document data 
+         status: container.title, 
+       }
+   );
+       // Add your document data here
+     }
+     catch (error) {
+       console.log(error);
+     }
+
     container.items.push({
       id,
       title: itemName,
@@ -323,9 +346,10 @@ export default function Home() {
         (container) => container.id === overContainer.id,
       );
       // Find the index of the active and over item
-      const activeitemIndex = activeContainer.items.findIndex(
+      const activeitemIndex = activeContainer.items.findIndex( 
         (item) => item.id === active.id,
-      );
+      ); 
+      
 
       let newItems = [...containers];
       const [removeditem] = newItems[activeContainerIndex].items.splice(
@@ -334,6 +358,13 @@ export default function Home() {
       );
       newItems[overContainerIndex].items.push(removeditem);
       setContainers(newItems);
+
+      //changing the database status
+      // Now you can access the title of the over container
+      const overContainerTitle = overContainer.title;
+      // Call your database update function
+      databases.updateDocument('655f2c7ad4a8a6871b95', '[COLLECTION_ID]', '[DOCUMENT_ID]');
+
     }
     setActiveId(null);
   }
